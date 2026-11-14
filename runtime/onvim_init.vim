@@ -127,30 +127,11 @@ function! OnVimApplyTheme(theme_name) abort
     endif
   endfor
 
-  " Применяем тему оформления
+  " Применяем тему оформления (родные цвета темы для CursorLine, синтаксиса и фона)
   execute 'colorscheme ' . a:theme_name
 
   " Применяем соответствующую тему статуслайна Airline
   execute 'silent! AirlineTheme ' . l:target_airline
-
-  " Тонкая настройка контраста вкладок buftabline, курсора и номеров строк
-  if &background ==# 'dark'
-    hi! CursorLine        guibg=#262626 ctermbg=235
-    hi! LineNr            guifg=#666666 ctermfg=242
-    hi! CursorLineNr      guifg=#f0f0f0 guibg=#262626 gui=bold ctermfg=255
-    hi! BufTabLineCurrent guifg=#ffffff guibg=#383838 gui=bold ctermfg=255 ctermbg=237
-    hi! BufTabLineActive  guifg=#bbbbbb guibg=#282828 ctermfg=250 ctermbg=235
-    hi! BufTabLineHidden  guifg=#707070 guibg=#1c1c1c ctermfg=242 ctermbg=234
-    hi! BufTabLineFill    guifg=NONE    guibg=#141414 ctermbg=233
-  else
-    hi! CursorLine        guibg=#e5e5e5 ctermbg=254
-    hi! LineNr            guifg=#888888 ctermfg=245
-    hi! CursorLineNr      guifg=#000000 guibg=#e5e5e5 gui=bold ctermfg=16
-    hi! BufTabLineCurrent guifg=#000000 guibg=#d0d0d0 gui=bold ctermfg=16 ctermbg=252
-    hi! BufTabLineActive  guifg=#444444 guibg=#e0e0e0 ctermfg=238 ctermbg=254
-    hi! BufTabLineHidden  guifg=#888888 guibg=#f0f0f0 ctermfg=245 ctermbg=255
-    hi! BufTabLineFill    guifg=NONE    guibg=#eaeaea ctermbg=255
-  endif
 
   " Сохраняем тему, чтобы выбор сохранялся при последующих запусках
   call writefile([a:theme_name], s:theme_config_file)
