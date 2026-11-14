@@ -3,6 +3,11 @@
 "                         Path: ~/.config/onvim/init
 " ==============================================================================
 
+" --- Настройка путей OnVim ---
+set runtimepath^=~/.config/onvim
+set runtimepath+=~/.config/onvim/after
+set packpath^=~/.config/onvim
+
 " --- Базовые настройки ---
 let mapleader = " "
 let maplocalleader = " "
@@ -58,23 +63,63 @@ Plug 'prabirshrestha/asyncomplete-lsp.vim'    " Автодополнение о�
 call plug#end()
 
 " ==============================================================================
-"                           Тема и Оформление
+"                           Тема и Оформление (Grey / Charcoal)
 " ==============================================================================
 set background=dark
-silent! colorscheme catppuccin_mocha
+
+" Основная тема — темная графитово-серая Habamax
+silent! colorscheme habamax
 if !exists('g:colors_name')
-  silent! colorscheme habamax
+  silent! colorscheme retrobox
 endif
 
-" Настройка статус-лайна (Airline / Lualine)
+" Статус-лайн в строгих серых тонах (без синего цвета)
 let g:airline_powerline_fonts = 1
-let g:airline_theme = 'catppuccin'
+let g:airline_theme = 'base16_grayscale_dark'
 let g:airline#extensions#tabline#enabled = 0 " Используем buftabline для вкладок
 
 " Настройка верхних вкладок (Buftabline)
 let g:buftabline_numbers = 2
 let g:buftabline_indicators = 1
 let g:buftabline_separators = 1
+
+" Подгонка интерфейса под глубокий серый стиль (Charcoal / Monochrome)
+function! s:apply_grey_theme() abort
+  " Вкладки сверху
+  hi! BufTabLineCurrent guifg=#f0f0f0 guibg=#383838 gui=bold ctermfg=255 ctermbg=237
+  hi! BufTabLineActive  guifg=#bbbbbb guibg=#282828 ctermfg=250 ctermbg=235
+  hi! BufTabLineHidden  guifg=#707070 guibg=#1c1c1c ctermfg=242 ctermbg=234
+  hi! BufTabLineFill    guifg=NONE    guibg=#141414 ctermbg=233
+  " Боковая панель NERDTree
+  hi! NERDTreeDir       guifg=#d0d0d0 gui=bold ctermfg=252
+  hi! NERDTreeDirSlash  guifg=#888888 ctermfg=245
+  hi! NERDTreeFile      guifg=#b8b8b8 ctermfg=249
+  hi! NERDTreeCWD       guifg=#e0e0e0 gui=bold ctermfg=254
+  " Курсорная строка и номера строк
+  hi! CursorLine        guibg=#252525 ctermbg=235
+  hi! CursorLineNr      guifg=#e5e5e5 guibg=#252525 gui=bold ctermfg=254
+  hi! LineNr            guifg=#5e5e5e ctermfg=240
+  hi! SignColumn        guibg=#1c1c1c ctermbg=234
+  " Меню автодополнения (Popup Menu)
+  hi! Pmenu             guifg=#cccccc guibg=#262626 ctermfg=251 ctermbg=235
+  hi! PmenuSel          guifg=#ffffff guibg=#484848 gui=bold ctermfg=255 ctermbg=239
+  hi! PmenuSbar         guibg=#333333 ctermbg=236
+  hi! PmenuThumb        guibg=#666666 ctermbg=242
+  " Дашборд
+  hi! StartifyHeader    guifg=#a8a8a8 gui=bold ctermfg=248
+  hi! StartifySection   guifg=#c4c4c4 gui=bold ctermfg=251
+  hi! StartifyFile      guifg=#e2e2e2 ctermfg=253
+  hi! StartifyBracket   guifg=#707070 ctermfg=242
+  hi! StartifyNumber    guifg=#9e9e9e ctermfg=247
+  hi! StartifyPath      guifg=#787878 ctermfg=243
+endfunction
+
+augroup OnVimGreyTheme
+  au!
+  autocmd ColorScheme * call s:apply_grey_theme()
+augroup END
+
+call s:apply_grey_theme()
 
 " ==============================================================================
 "                      Стартовый экран (Dashboard / Startify)
