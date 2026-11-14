@@ -221,7 +221,7 @@ typedef struct dsc$descriptor   DESC;
 # ifdef VMS
 #  define USR_VIMRC_FILE  "sys$login:.vimrc"
 # else
-#  define USR_VIMRC_FILE "$HOME/.vimrc"
+#  define USR_VIMRC_FILE "~/.config/onvim/init"
 # endif
 #endif
 
@@ -230,18 +230,22 @@ typedef struct dsc$descriptor   DESC;
 # ifdef VMS
 #  define USR_VIMRC_FILE2	"sys$login:vimfiles/vimrc"
 # else
-#  define USR_VIMRC_FILE2	"~/.vim/vimrc"
+#  define USR_VIMRC_FILE2	"~/.init"
 # endif
 #endif
 
 #ifndef XDG_VIMRC_FILE
 # define XDG_VIMRC_FILE (mch_getenv((char_u *)"XDG_CONFIG_HOME") \
-	? "$XDG_CONFIG_HOME/vim/vimrc" \
-	: "~/.config/vim/vimrc")
+	? "$XDG_CONFIG_HOME/onvim/init" \
+	: "~/.config/onvim/init")
 #endif
 
-#if !defined(USR_VIMRC_FILE3) && defined(VMS)
-# define USR_VIMRC_FILE3 "sys$login:_vimrc"
+#if !defined(USR_VIMRC_FILE3)
+# ifdef VMS
+#  define USR_VIMRC_FILE3 "sys$login:_vimrc"
+# else
+#  define USR_VIMRC_FILE3 "~/.onvimrc"
+# endif
 #endif
 
 #ifndef USR_GVIMRC_FILE

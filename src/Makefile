@@ -271,9 +271,9 @@ CC=
 
 # Defaults used when auto/config.mk does not exist.
 srcdir = .
-VIMNAME = vim
-EXNAME = ex
-VIEWNAME = view
+VIMNAME = onvim
+EXNAME = oex
+VIEWNAME = oview
 
 ######################## auto/config.mk ######################## {{{1
 # At this position auto/config.mk is included. When starting from the

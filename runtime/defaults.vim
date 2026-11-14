@@ -155,3 +155,67 @@ if has('langmap') && exists('+langremap')
   " compatible).
   set nolangremap
 endif
+
+" ==============================================================================
+" OnVim Modern Defaults
+" ==============================================================================
+
+" Line numbering & visual cues
+set number
+set relativenumber
+set cursorline
+set showcmd
+set ruler
+
+" Indentation & Tabs
+set autoindent
+set smartindent
+set expandtab
+set tabstop=4
+set shiftwidth=4
+set softtabstop=4
+
+" Search behavior
+set ignorecase
+set smartcase
+set hlsearch
+set incsearch
+
+" Backspace & Mouse
+set backspace=indent,eol,start
+if has('mouse')
+  set mouse=a
+endif
+
+" True color support (if supported by terminal)
+if has('termguicolors')
+  set termguicolors
+endif
+
+" Autocompletion & Command line popup menu (: completion)
+set wildmenu
+set wildmode=longest:full,full
+if exists('+wildoptions')
+  set wildoptions=pum,tagfile
+endif
+if exists('+completeopt')
+  set completeopt=menu,menuone,noselect
+endif
+
+" Clipboard integration (system clipboard)
+if has('clipboard')
+  set clipboard^=unnamed,unnamedplus
+endif
+
+" VS Code-style Sidebar File Explorer
+let g:netrw_banner = 0
+let g:netrw_liststyle = 3
+let g:netrw_browse_split = 4
+let g:netrw_altv = 1
+let g:netrw_winsize = 25
+let g:netrw_keepdir = 1
+
+" Toggle File Tree with Ctrl+B (like in VS Code) or F2
+nnoremap <silent> <C-b> :Lexplore<CR>
+nnoremap <silent> <F2> :Lexplore<CR>
+command! -nargs=0 Tree Lexplore

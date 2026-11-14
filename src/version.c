@@ -3945,21 +3945,18 @@ intro_message(
     char	*p;
     static char	*(lines[]) =
     {
-	N_("VIM - Vi IMproved"),
+	N_("Hi on OnVim"),
 	"",
 	N_("version "),
-	N_("by Bram Moolenaar et al."),
+	N_("by netanyahy"),
 #ifdef MODIFIED_BY
 	" ",
 #endif
-	N_("Vim is open source and freely distributable"),
-	"",
-	N_("Help poor children in Uganda!"),
-	N_("type  :help Kuwasha<Enter>    for information "),
+	N_("OnVim is open source and freely distributable"),
 	"",
 	N_("type  :q<Enter>               to exit         "),
 	N_("type  :help<Enter>  or  <F1>  for on-line help"),
-	N_("type  :help version9<Enter>   for version info"),
+	N_("press <Ctrl-b>                toggle File Tree"),
 	NULL,
 	"",
 	N_("Running in Vi compatible mode"),
