@@ -64,15 +64,15 @@ chmod +x "${BIN_DIR}/onvim"
 
 echo -e "${GREEN}[4/6]${RESET} Настройка конфигурации OnVim (~/.config/onvim/init)..."
 mkdir -p "${CONFIG_DIR}/autoload"
+mkdir -p "${CONFIG_DIR}/after/plugin"
 mkdir -p "${SHARE_DIR}/undo"
 mkdir -p "${PLUGGED_DIR}"
 
-if [ ! -f "${CONFIG_DIR}/init" ]; then
-  cp "${SCRIPT_DIR}/runtime/onvim_init.vim" "${CONFIG_DIR}/init"
-  echo -e "   -> Создан файл конфигурации: ${CONFIG_DIR}/init"
-fi
-
+cp "${SCRIPT_DIR}/runtime/onvim_init.vim" "${CONFIG_DIR}/init"
 cp "${SCRIPT_DIR}/runtime/autoload/plug.vim" "${CONFIG_DIR}/autoload/plug.vim"
+if [ -d "${SCRIPT_DIR}/runtime/after" ]; then
+  cp -r "${SCRIPT_DIR}/runtime/after/"* "${CONFIG_DIR}/after/" 2>/dev/null || true
+fi
 
 echo -e "${GREEN}[5/6]${RESET} Установка плагинов (UI, LSP, NerdTree, темы)..."
 declare -A PLUGINS=(

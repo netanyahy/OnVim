@@ -104,34 +104,75 @@ call plug#end()
 set background=dark
 
 let g:onvim_themes = [
-\ {'name': 'habamax',              'airline': 'base16_grayscale_dark',      'desc': 'Графит / Charcoal dark (по умолчанию)'},
-\ {'name': 'catppuccin_mocha',     'airline': 'catppuccin_mocha',           'desc': 'Catppuccin Mocha (неоновый темный)'},
-\ {'name': 'catppuccin_macchiato', 'airline': 'catppuccin_macchiato',       'desc': 'Catppuccin Macchiato (мягкий темный)'},
-\ {'name': 'catppuccin_frappe',    'airline': 'catppuccin_frappe',          'desc': 'Catppuccin Frappe (приглушенный серый)'},
-\ {'name': 'retrobox',             'airline': 'base16_gruvbox_dark_medium', 'desc': 'Retrobox (Gruvbox ретро-темный)'},
-\ {'name': 'catppuccin_latte',     'airline': 'catppuccin_latte',           'desc': 'Catppuccin Latte (светлая тема)'},
-\ {'name': 'quiet',                'airline': 'monochrome',                 'desc': 'Quiet (минималистичный монохром)'},
-\ {'name': 'desert',               'airline': 'desertink',                  'desc': 'Desert (классическая легендарная)'},
-\ {'name': 'sorbet',               'airline': 'violet',                     'desc': 'Sorbet (темно-ягодная)'},
-\ {'name': 'industry',             'airline': 'dark',                       'desc': 'Industry (темный хай-тек)'},
+\ {'name': 'habamax',              'airline': 'base16_grayscale_dark',      'bg': 'dark',  'desc': 'Графит / Charcoal dark (по умолчанию)'},
+\ {'name': 'catppuccin_mocha',     'airline': 'catppuccin_mocha',           'bg': 'dark',  'desc': 'Catppuccin Mocha (неоновый темный)'},
+\ {'name': 'catppuccin_macchiato', 'airline': 'catppuccin_macchiato',       'bg': 'dark',  'desc': 'Catppuccin Macchiato (мягкий темный)'},
+\ {'name': 'catppuccin_frappe',    'airline': 'catppuccin_frappe',          'bg': 'dark',  'desc': 'Catppuccin Frappe (приглушенный серый)'},
+\ {'name': 'tokyonight',           'airline': 'tokyonight',                 'bg': 'dark',  'desc': 'Tokyo Night (неоновая японская ночь)'},
+\ {'name': 'tokyonight-storm',     'airline': 'tokyonight',                 'bg': 'dark',  'desc': 'Tokyo Night Storm (глубокий синий)'},
+\ {'name': 'tokyonight-moon',      'airline': 'tokyonight',                 'bg': 'dark',  'desc': 'Tokyo Night Moon (мягкая лунная ночь)'},
+\ {'name': 'onedark',              'airline': 'onedark',                    'bg': 'dark',  'desc': 'One Dark Pro (легендарная VS Code / Atom)'},
+\ {'name': 'nord',                 'airline': 'base16_nord',                'bg': 'dark',  'desc': 'Nord (арктический сине-серый)'},
+\ {'name': 'dracula',              'airline': 'base16_dracula',             'bg': 'dark',  'desc': 'Dracula (культовый вампирский контраст)'},
+\ {'name': 'retrobox',             'airline': 'base16_gruvbox_dark_medium', 'bg': 'dark',  'desc': 'Retrobox (Gruvbox ретро-темный)'},
+\ {'name': 'everforest',           'airline': 'base16_gruvbox_dark_medium', 'bg': 'dark',  'desc': 'Everforest (природный хвойный зеленый)'},
+\ {'name': 'rose-pine',            'airline': 'base16_horizon_dark',        'bg': 'dark',  'desc': 'Rosé Pine (эстетичный пастельный ретро)'},
+\ {'name': 'lunaperche',           'airline': 'dark',                       'bg': 'dark',  'desc': 'Luna Perche (глубокий контраст от Брэма)'},
+\ {'name': 'wildcharm',            'airline': 'base16_solarized_dark',      'bg': 'dark',  'desc': 'Wild Charm (теплый современный темный)'},
+\ {'name': 'zaibatsu',             'airline': 'base16_google_dark',         'bg': 'dark',  'desc': 'Zaibatsu (киберпанк терминал)'},
+\ {'name': 'sorbet',               'airline': 'violet',                     'bg': 'dark',  'desc': 'Sorbet (темно-ягодная)'},
+\ {'name': 'industry',             'airline': 'dark',                       'bg': 'dark',  'desc': 'Industry (темный хай-тек)'},
+\ {'name': 'desert',               'airline': 'desertink',                  'bg': 'dark',  'desc': 'Desert (классическая легендарная)'},
+\ {'name': 'quiet',                'airline': 'monochrome',                 'bg': 'dark',  'desc': 'Quiet (минималистичный монохром)'},
+\ {'name': 'catppuccin_latte',     'airline': 'catppuccin_latte',           'bg': 'light', 'desc': 'Catppuccin Latte (светлая пастельная)'},
+\ {'name': 'tokyonight-day',       'airline': 'base16_one_light',           'bg': 'light', 'desc': 'Tokyo Night Day (светлая чистая тема)'},
 \ ]
 
 let s:theme_config_file = expand('~/.config/onvim/current_theme')
 
 function! OnVimApplyTheme(theme_name) abort
   let l:target_airline = 'base16_grayscale_dark'
+  let l:theme_bg = 'dark'
+
   for item in g:onvim_themes
     if item.name ==# a:theme_name
       let l:target_airline = item.airline
+      let l:theme_bg = get(item, 'bg', 'dark')
       break
     endif
   endfor
 
-  " Применяем тему оформления (родные цвета темы для CursorLine, синтаксиса и фона)
+  " Устанавливаем фоновый режим (dark / light)
+  let &background = l:theme_bg
+
+  " Применяем цветовую схему
   execute 'colorscheme ' . a:theme_name
 
-  " Применяем соответствующую тему статуслайна Airline
-  execute 'silent! AirlineTheme ' . l:target_airline
+  " Обновляем глобальную переменную темы Airline
+  let g:airline_theme = l:target_airline
+
+  " Применяем тему Airline, если плагин уже загружен
+  if exists(':AirlineTheme')
+    execute 'silent! AirlineTheme ' . l:target_airline
+    silent! AirlineRefresh
+  endif
+
+  " Сохраняем надежный прямоугольный блочный курсор во всех режимах
+  set guicursor=a:block-Cursor
+  hi! Cursor guifg=bg guibg=fg
+
+  " Контрастная подсветка вкладок файлов buftabline
+  if &background ==# 'dark'
+    hi! BufTabLineCurrent gui=bold guifg=#ffffff guibg=#3b4252 ctermfg=255 ctermbg=238
+    hi! BufTabLineActive  gui=NONE guifg=#b0b8c4 guibg=#282c34 ctermfg=250 ctermbg=236
+    hi! BufTabLineHidden  gui=NONE guifg=#6c7689 guibg=#1e222b ctermfg=242 ctermbg=234
+    hi! BufTabLineFill    gui=NONE guifg=NONE    guibg=#16181f ctermbg=233
+  else
+    hi! BufTabLineCurrent gui=bold guifg=#1a1a1a guibg=#d0d7de ctermfg=16 ctermbg=253
+    hi! BufTabLineActive  gui=NONE guifg=#333333 guibg=#e1e4e8 ctermfg=238 ctermbg=254
+    hi! BufTabLineHidden  gui=NONE guifg=#666666 guibg=#eaeef2 ctermfg=244 ctermbg=255
+    hi! BufTabLineFill    gui=NONE guifg=NONE    guibg=#f6f8fa ctermbg=255
+  endif
 
   " Сохраняем тему, чтобы выбор сохранялся при последующих запусках
   call writefile([a:theme_name], s:theme_config_file)
@@ -139,13 +180,15 @@ endfunction
 
 function! OnVimSelectTheme() abort
   echo "==================== Выбор темы OnVim ===================="
+  let l:current = get(g:, 'colors_name', '')
   let l:i = 1
   for item in g:onvim_themes
-    echo printf(" [%2d] %-20s - %s", l:i, item.name, item.desc)
+    let l:mark = (item.name ==# l:current) ? ' [✓]' : '    '
+    echo printf(" %s [%2d] %-20s - %s", l:mark, l:i, item.name, item.desc)
     let l:i += 1
   endfor
   echo "=========================================================="
-  let l:choice = input("Выберите номер темы [1-10] (Enter для отмены): ")
+  let l:choice = input(printf("Выберите номер темы [1-%d] (Enter для отмены): ", len(g:onvim_themes)))
   let l:idx = str2nr(l:choice) - 1
   if l:idx >= 0 && l:idx < len(g:onvim_themes)
     let l:th = g:onvim_themes[l:idx].name
@@ -157,15 +200,30 @@ function! OnVimSelectTheme() abort
   endif
 endfunction
 
+function! OnVimThemeComplete(ArgLead, CmdLine, CursorPos) abort
+  let l:names = []
+  for item in g:onvim_themes
+    if item.name =~? '^' . a:ArgLead
+      call add(l:names, item.name)
+    endif
+  endfor
+  return l:names
+endfunction
+
 command! -nargs=0 Themes call OnVimSelectTheme()
-command! -nargs=1 -complete=color Theme call OnVimApplyTheme(<f-args>)
+command! -nargs=1 -complete=customlist,OnVimThemeComplete Theme call OnVimApplyTheme(<f-args>)
 nnoremap <silent> <leader>th :Themes<CR>
 
 " Статус-лайн в стиле LazyVim
 let g:airline_powerline_fonts = 1
-let g:airline_theme = 'base16_grayscale_dark'
 let g:airline#extensions#tabline#enabled = 0 " Используем buftabline для вкладок
 let g:airline_skip_empty_sections = 1
+
+" Автосинхронизация темы Airline при старте OnVim
+augroup OnVimAirlineSync
+  autocmd!
+  autocmd VimEnter * silent! execute 'AirlineTheme ' . g:airline_theme | silent! AirlineRefresh
+augroup END
 
 " Чистый текст режима без сокращения в 'N...'
 let g:airline_mode_map = {
