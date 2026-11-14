@@ -19,6 +19,15 @@ set clipboard^=unnamed,unnamedplus
 set termguicolors
 set number relativenumber
 set cursorline
+
+" Залитый прямоугольный блочный курсор во всех режимах (Normal, Insert, Visual)
+set guicursor=a:block-Cursor
+if !has('gui_running')
+  let &t_SI = "\e[2 q"
+  let &t_EI = "\e[2 q"
+  let &t_SR = "\e[2 q"
+endif
+
 set scrolloff=3
 set sidescrolloff=5
 
@@ -80,6 +89,45 @@ silent! colorscheme habamax
 if !exists('g:colors_name')
   silent! colorscheme retrobox
 endif
+
+" ==============================================================================
+"                 Интерактивное меню выбора тем (:Themes или <Пробел>+th)
+" ==============================================================================
+let g:onvim_themes = [
+\ {'name': 'habamax',              'desc': 'Темный графит / угольный серый (по умолчанию)'},
+\ {'name': 'retrobox',             'desc': 'Винтажный ретро-темный (Gruvbox стиль)'},
+\ {'name': 'catppuccin_mocha',     'desc': 'Catppuccin Mocha (современный неоновый темный)'},
+\ {'name': 'catppuccin_macchiato', 'desc': 'Catppuccin Macchiato (мягкий темный)'},
+\ {'name': 'catppuccin_frappe',    'desc': 'Catppuccin Frappe (приглушенный серый)'},
+\ {'name': 'catppuccin_latte',     'desc': 'Catppuccin Latte (светлая тема)'},
+\ {'name': 'quiet',                'desc': 'Quiet (чистый минималистичный монохром)'},
+\ {'name': 'desert',               'desc': 'Desert (классическая легендарная тема)'},
+\ {'name': 'sorbet',               'desc': 'Sorbet (темно-ягодная серая)'},
+\ {'name': 'industry',             'desc': 'Industry (темный хай-тек)'},
+\ ]
+
+function! OnVimSelectTheme() abort
+  echo "==================== Выбор темы OnVim ===================="
+  let l:i = 1
+  for item in g:onvim_themes
+    echo printf(" [%2d] %-20s - %s", l:i, item.name, item.desc)
+    let l:i += 1
+  endfor
+  echo "=========================================================="
+  let l:choice = input("Выберите номер темы [1-10] (Enter для отмены): ")
+  let l:idx = str2nr(l:choice) - 1
+  if l:idx >= 0 && l:idx < len(g:onvim_themes)
+    let l:th = g:onvim_themes[l:idx].name
+    execute 'colorscheme ' . l:th
+    echo "\nТема успешно изменена на: " . l:th
+  else
+    echo "\nВыбор отменен."
+  endif
+endfunction
+
+command! -nargs=0 Themes call OnVimSelectTheme()
+command! -nargs=1 -complete=color Theme colorscheme <args>
+nnoremap <silent> <leader>th :Themes<CR>
 
 " Статус-лайн в строгих серых тонах (без синего цвета)
 let g:airline_powerline_fonts = 1
