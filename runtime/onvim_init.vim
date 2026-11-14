@@ -424,7 +424,7 @@ if executable('jdtls')
     \ })
 endif
 
-" Максимальная детализация подсветки Java как в VS Code
+" Максимальная детализация подсветки Java 
 let g:java_highlight_all = 1
 let g:java_highlight_functions = 1
 let g:java_highlight_signature = 1
@@ -527,6 +527,11 @@ au User asyncomplete_setup call asyncomplete#register_source(asyncomplete#source
 "                           Горячие клавиши
 " ==============================================================================
 
+" Блокируем Ctrl+S, чтобы он случайно не активировал команду 's' (substitute / режим вставки)
+nnoremap <C-s> <Nop>
+inoremap <C-s> <Nop>
+vnoremap <C-s> <Nop>
+
 " Сброс подсветки поиска клавишей Escape
 nnoremap <silent> <Esc> :nohlsearch<CR><Esc>
 
@@ -546,7 +551,7 @@ nnoremap <leader>x <C-w>c
 "               Переключение верхних вкладок (Buftabline)
 " ==============================================================================
 " 1. По кругу: Tab (вперёд) и Shift+Tab (назад)
-nnoremap <silent> <Tab> :bnext<CR>
+noremap <silent> <Tab> :bnext<CR>
 nnoremap <silent> <S-Tab> :bprev<CR>
 nnoremap <silent> ]b :bnext<CR>
 nnoremap <silent> [b :bprev<CR>
