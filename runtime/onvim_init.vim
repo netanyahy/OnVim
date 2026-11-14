@@ -354,6 +354,35 @@ let g:lsp_diagnostics_float_cursor = 1
 let g:lsp_async_completion = 1
 let g:lsp_settings_warn_missing_server = 0
 
+" Не мигать ошибками прямо во время набора в режиме вставки (как в VS Code)
+let g:lsp_diagnostics_signs_insert_mode_enabled = 0
+let g:lsp_diagnostics_highlights_insert_mode_enabled = 0
+
+" Красивые иконки диагностики в левой колонке (Nerd Font)
+let g:lsp_diagnostics_signs_error = {'text': '●'}
+let g:lsp_diagnostics_signs_warning = {'text': '▲'}
+let g:lsp_diagnostics_signs_information = {'text': 'ℹ'}
+let g:lsp_diagnostics_signs_hint = {'text': '💡'}
+
+" Аккуратная подсветка ошибок подчёркиванием без ядовитой заливки фона
+augroup OnVimLspHighlights
+  au!
+  autocmd ColorScheme,VimEnter * call s:tune_lsp_highlights()
+augroup END
+
+function! s:tune_lsp_highlights() abort
+  hi! LspErrorHighlight   gui=undercurl guisp=#f38ba8 guibg=NONE cterm=underline ctermbg=NONE
+  hi! LspWarningHighlight gui=undercurl guisp=#f9e2af guibg=NONE cterm=underline ctermbg=NONE
+  hi! LspInfoHighlight    gui=undercurl guisp=#89dceb guibg=NONE cterm=underline ctermbg=NONE
+  hi! LspHintHighlight    gui=undercurl guisp=#a6e3a1 guibg=NONE cterm=underline ctermbg=NONE
+
+  hi! LspErrorText   guifg=#f38ba8 guibg=NONE gui=bold ctermfg=203 ctermbg=NONE
+  hi! LspWarningText guifg=#f9e2af guibg=NONE gui=bold ctermfg=221 ctermbg=NONE
+  hi! LspInfoText    guifg=#89dceb guibg=NONE ctermfg=117 ctermbg=NONE
+  hi! LspHintText    guifg=#a6e3a1 guibg=NONE ctermfg=120 ctermbg=NONE
+endfunction
+call s:tune_lsp_highlights()
+
 " Автоматическая регистрация серверов автодополнения и анализа:
 " 1. Python (pyright)
 if executable('pyright-langserver')
@@ -509,21 +538,53 @@ nnoremap <leader>q :q<CR>
 " Сброс подсветки поиска клавишей Escape
 nnoremap <silent> <Esc> :nohlsearch<CR><Esc>
 
-" Навигация между сплитами через Ctrl + h/j/k/l
+" Навигация между окнами и панелью файлов (NERDTree слева <-> код справа)
 nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
+nnoremap <C-w><C-w> <C-w>w
 
-" Создание сплитов: Пробел + v, Пробел + s, Пробел + x
+" Создание и закрытие сплитов: Пробел + v, Пробел + s, Пробел + x
 nnoremap <leader>v :vsplit<CR>
 nnoremap <leader>s :split<CR>
 nnoremap <leader>x <C-w>c
 
-" Переключение вкладок сверху (Tab и Shift+Tab)
-nnoremap <Tab> :bnext<CR>
-nnoremap <S-Tab> :bprev<CR>
-nnoremap <leader>bd :bdelete<CR>
+" ==============================================================================
+"               Переключение верхних вкладок (Buftabline)
+" ==============================================================================
+" 1. По кругу: Tab (вперёд) и Shift+Tab (назад)
+nnoremap <silent> <Tab> :bnext<CR>
+nnoremap <silent> <S-Tab> :bprev<CR>
+nnoremap <silent> ]b :bnext<CR>
+nnoremap <silent> [b :bprev<CR>
+nnoremap <silent> <M-Right> :bnext<CR>
+nnoremap <silent> <M-Left> :bprev<CR>
+
+" 2. Мгновенно по номеру вкладки: Пробел + 1..9 или Alt + 1..9
+nnoremap <silent> <leader>1 :1b<CR>
+nnoremap <silent> <leader>2 :2b<CR>
+nnoremap <silent> <leader>3 :3b<CR>
+nnoremap <silent> <leader>4 :4b<CR>
+nnoremap <silent> <leader>5 :5b<CR>
+nnoremap <silent> <leader>6 :6b<CR>
+nnoremap <silent> <leader>7 :7b<CR>
+nnoremap <silent> <leader>8 :8b<CR>
+nnoremap <silent> <leader>9 :9b<CR>
+
+nnoremap <silent> <M-1> :1b<CR>
+nnoremap <silent> <M-2> :2b<CR>
+nnoremap <silent> <M-3> :3b<CR>
+nnoremap <silent> <M-4> :4b<CR>
+nnoremap <silent> <M-5> :5b<CR>
+nnoremap <silent> <M-6> :6b<CR>
+nnoremap <silent> <M-7> :7b<CR>
+nnoremap <silent> <M-8> :8b<CR>
+nnoremap <silent> <M-9> :9b<CR>
+
+" 3. Закрыть текущую вкладку: Пробел + c или Пробел + bd
+nnoremap <silent> <leader>c :bdelete<CR>
+nnoremap <silent> <leader>bd :bdelete<CR>
 
 " Перемещение строк вверх/вниз в визуальном режиме (J и K)
 vnoremap J :m '>+1<CR>gv=gv
