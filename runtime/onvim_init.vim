@@ -17,18 +17,25 @@ set fileencoding=utf-8
 set mouse=a
 set clipboard^=unnamed,unnamedplus
 set termguicolors
-set number relativenumber
+set number norelativenumber
 set cursorline
 
 " Залитый прямоугольный блочный курсор во всех режимах (Normal, Insert, Visual)
 set guicursor=a:block-Cursor
+hi Cursor guifg=bg guibg=fg
 
 " Поддержка русской раскладки в обычном режиме (h/j/k/l, w, q, и двоеточие : работают на русском)
-set langmap=ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯ;ABCDEFGHIJKLMNOPQRSTUVWXYZ,фисвуапршолдьтщзйкыегмцчня;abcdefghijklmnopqrstuvwxyz
+set langmap=ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯ;ABCDEFGHIJKLMNOPQRSTUVWXYZ,фисвуапршолдьтщзйкыегмцчня;abcdefghijklmnopqrstuvwxyz,Ж;:
 nnoremap Ж :
 nnoremap ж :
 vnoremap Ж :
 vnoremap ж :
+
+" Быстрая навигация в режиме вставки (Insert mode) без необходимости тянуться к стрелкам
+inoremap <C-h> <Left>
+inoremap <C-j> <Down>
+inoremap <C-k> <Up>
+inoremap <C-l> <Right>
 
 " Избегаем зависаний на сообщениях
 set shortmess+=c
@@ -92,31 +99,62 @@ Plug 'prabirshrestha/asyncomplete-lsp.vim'    " Автодополнение о�
 call plug#end()
 
 " ==============================================================================
-"                           Тема и Оформление (Grey / Charcoal)
+"                  Настройка тем и интерфейса (Theme Switcher)
 " ==============================================================================
 set background=dark
 
-" Основная тема — темная графитово-серая Habamax
-silent! colorscheme habamax
-if !exists('g:colors_name')
-  silent! colorscheme retrobox
-endif
-
-" ==============================================================================
-"                 Интерактивное меню выбора тем (:Themes или <Пробел>+th)
-" ==============================================================================
 let g:onvim_themes = [
-\ {'name': 'habamax',              'desc': 'Темный графит / угольный серый (по умолчанию)'},
-\ {'name': 'retrobox',             'desc': 'Винтажный ретро-темный (Gruvbox стиль)'},
-\ {'name': 'catppuccin_mocha',     'desc': 'Catppuccin Mocha (современный неоновый темный)'},
-\ {'name': 'catppuccin_macchiato', 'desc': 'Catppuccin Macchiato (мягкий темный)'},
-\ {'name': 'catppuccin_frappe',    'desc': 'Catppuccin Frappe (приглушенный серый)'},
-\ {'name': 'catppuccin_latte',     'desc': 'Catppuccin Latte (светлая тема)'},
-\ {'name': 'quiet',                'desc': 'Quiet (чистый минималистичный монохром)'},
-\ {'name': 'desert',               'desc': 'Desert (классическая легендарная тема)'},
-\ {'name': 'sorbet',               'desc': 'Sorbet (темно-ягодная серая)'},
-\ {'name': 'industry',             'desc': 'Industry (темный хай-тек)'},
+\ {'name': 'habamax',              'airline': 'base16_grayscale_dark',      'desc': 'Графит / Charcoal dark (по умолчанию)'},
+\ {'name': 'catppuccin_mocha',     'airline': 'catppuccin_mocha',           'desc': 'Catppuccin Mocha (неоновый темный)'},
+\ {'name': 'catppuccin_macchiato', 'airline': 'catppuccin_macchiato',       'desc': 'Catppuccin Macchiato (мягкий темный)'},
+\ {'name': 'catppuccin_frappe',    'airline': 'catppuccin_frappe',          'desc': 'Catppuccin Frappe (приглушенный серый)'},
+\ {'name': 'retrobox',             'airline': 'base16_gruvbox_dark_medium', 'desc': 'Retrobox (Gruvbox ретро-темный)'},
+\ {'name': 'catppuccin_latte',     'airline': 'catppuccin_latte',           'desc': 'Catppuccin Latte (светлая тема)'},
+\ {'name': 'quiet',                'airline': 'monochrome',                 'desc': 'Quiet (минималистичный монохром)'},
+\ {'name': 'desert',               'airline': 'desertink',                  'desc': 'Desert (классическая легендарная)'},
+\ {'name': 'sorbet',               'airline': 'violet',                     'desc': 'Sorbet (темно-ягодная)'},
+\ {'name': 'industry',             'airline': 'dark',                       'desc': 'Industry (темный хай-тек)'},
 \ ]
+
+let s:theme_config_file = expand('~/.config/onvim/current_theme')
+
+function! OnVimApplyTheme(theme_name) abort
+  let l:target_airline = 'base16_grayscale_dark'
+  for item in g:onvim_themes
+    if item.name ==# a:theme_name
+      let l:target_airline = item.airline
+      break
+    endif
+  endfor
+
+  " Применяем тему оформления
+  execute 'colorscheme ' . a:theme_name
+
+  " Применяем соответствующую тему статуслайна Airline
+  execute 'silent! AirlineTheme ' . l:target_airline
+
+  " Тонкая настройка контраста вкладок buftabline, курсора и номеров строк
+  if &background ==# 'dark'
+    hi! CursorLine        guibg=#262626 ctermbg=235
+    hi! LineNr            guifg=#666666 ctermfg=242
+    hi! CursorLineNr      guifg=#f0f0f0 guibg=#262626 gui=bold ctermfg=255
+    hi! BufTabLineCurrent guifg=#ffffff guibg=#383838 gui=bold ctermfg=255 ctermbg=237
+    hi! BufTabLineActive  guifg=#bbbbbb guibg=#282828 ctermfg=250 ctermbg=235
+    hi! BufTabLineHidden  guifg=#707070 guibg=#1c1c1c ctermfg=242 ctermbg=234
+    hi! BufTabLineFill    guifg=NONE    guibg=#141414 ctermbg=233
+  else
+    hi! CursorLine        guibg=#e5e5e5 ctermbg=254
+    hi! LineNr            guifg=#888888 ctermfg=245
+    hi! CursorLineNr      guifg=#000000 guibg=#e5e5e5 gui=bold ctermfg=16
+    hi! BufTabLineCurrent guifg=#000000 guibg=#d0d0d0 gui=bold ctermfg=16 ctermbg=252
+    hi! BufTabLineActive  guifg=#444444 guibg=#e0e0e0 ctermfg=238 ctermbg=254
+    hi! BufTabLineHidden  guifg=#888888 guibg=#f0f0f0 ctermfg=245 ctermbg=255
+    hi! BufTabLineFill    guifg=NONE    guibg=#eaeaea ctermbg=255
+  endif
+
+  " Сохраняем тему, чтобы выбор сохранялся при последующих запусках
+  call writefile([a:theme_name], s:theme_config_file)
+endfunction
 
 function! OnVimSelectTheme() abort
   echo "==================== Выбор темы OnVim ===================="
@@ -130,7 +168,8 @@ function! OnVimSelectTheme() abort
   let l:idx = str2nr(l:choice) - 1
   if l:idx >= 0 && l:idx < len(g:onvim_themes)
     let l:th = g:onvim_themes[l:idx].name
-    execute 'colorscheme ' . l:th
+    call OnVimApplyTheme(l:th)
+    redraw
     echo "\nТема успешно изменена на: " . l:th
   else
     echo "\nВыбор отменен."
@@ -138,56 +177,58 @@ function! OnVimSelectTheme() abort
 endfunction
 
 command! -nargs=0 Themes call OnVimSelectTheme()
-command! -nargs=1 -complete=color Theme colorscheme <args>
+command! -nargs=1 -complete=color Theme call OnVimApplyTheme(<f-args>)
 nnoremap <silent> <leader>th :Themes<CR>
 
-" Статус-лайн в строгих серых тонах (без синего цвета)
+" Статус-лайн в стиле LazyVim
 let g:airline_powerline_fonts = 1
 let g:airline_theme = 'base16_grayscale_dark'
 let g:airline#extensions#tabline#enabled = 0 " Используем buftabline для вкладок
+let g:airline_skip_empty_sections = 1
+
+" Чистый текст режима без сокращения в 'N...'
+let g:airline_mode_map = {
+    \ '__'     : '-',
+    \ 'c'      : 'COMMAND',
+    \ 'i'      : 'INSERT',
+    \ 'ic'     : 'INSERT',
+    \ 'ix'     : 'INSERT',
+    \ 'n'      : 'NORMAL',
+    \ 'multi'  : 'MULTI',
+    \ 'ni'     : 'NORMAL',
+    \ 'no'     : 'OP',
+    \ 'R'      : 'REPLACE',
+    \ 'Rv'     : 'V-REPLACE',
+    \ 's'      : 'SELECT',
+    \ 'S'      : 'S-LINE',
+    \ ''     : 'S-BLOCK',
+    \ 't'      : 'TERMINAL',
+    \ 'v'      : 'VISUAL',
+    \ 'V'      : 'V-LINE',
+    \ ''     : 'V-BLOCK',
+    \ }
+
+" Лаконичная правая часть: процент и строка:колонка (без каши и обрезания)
+let g:airline_section_y = ''
+let g:airline_section_z = '%3p%% %l:%c'
 
 " Настройка верхних вкладок (Buftabline)
 let g:buftabline_numbers = 2
 let g:buftabline_indicators = 1
 let g:buftabline_separators = 1
 
-" Подгонка интерфейса под глубокий серый стиль (Charcoal / Monochrome)
-function! s:apply_grey_theme() abort
-  " Вкладки сверху
-  hi! BufTabLineCurrent guifg=#f0f0f0 guibg=#383838 gui=bold ctermfg=255 ctermbg=237
-  hi! BufTabLineActive  guifg=#bbbbbb guibg=#282828 ctermfg=250 ctermbg=235
-  hi! BufTabLineHidden  guifg=#707070 guibg=#1c1c1c ctermfg=242 ctermbg=234
-  hi! BufTabLineFill    guifg=NONE    guibg=#141414 ctermbg=233
-  " Боковая панель NERDTree
-  hi! NERDTreeDir       guifg=#d0d0d0 gui=bold ctermfg=252
-  hi! NERDTreeDirSlash  guifg=#888888 ctermfg=245
-  hi! NERDTreeFile      guifg=#b8b8b8 ctermfg=249
-  hi! NERDTreeCWD       guifg=#e0e0e0 gui=bold ctermfg=254
-  " Курсорная строка и номера строк
-  hi! CursorLine        guibg=#252525 ctermbg=235
-  hi! CursorLineNr      guifg=#e5e5e5 guibg=#252525 gui=bold ctermfg=254
-  hi! LineNr            guifg=#5e5e5e ctermfg=240
-  hi! SignColumn        guibg=#1c1c1c ctermbg=234
-  " Меню автодополнения (Popup Menu)
-  hi! Pmenu             guifg=#cccccc guibg=#262626 ctermfg=251 ctermbg=235
-  hi! PmenuSel          guifg=#ffffff guibg=#484848 gui=bold ctermfg=255 ctermbg=239
-  hi! PmenuSbar         guibg=#333333 ctermbg=236
-  hi! PmenuThumb        guibg=#666666 ctermbg=242
-  " Дашборд
-  hi! StartifyHeader    guifg=#a8a8a8 gui=bold ctermfg=248
-  hi! StartifySection   guifg=#c4c4c4 gui=bold ctermfg=251
-  hi! StartifyFile      guifg=#e2e2e2 ctermfg=253
-  hi! StartifyBracket   guifg=#707070 ctermfg=242
-  hi! StartifyNumber    guifg=#9e9e9e ctermfg=247
-  hi! StartifyPath      guifg=#787878 ctermfg=243
-endfunction
-
-augroup OnVimGreyTheme
-  au!
-  autocmd ColorScheme * call s:apply_grey_theme()
-augroup END
-
-call s:apply_grey_theme()
+" Загрузка сохраненной темы пользователя
+let s:init_theme = 'habamax'
+if filereadable(s:theme_config_file)
+  let s:saved_lines = readfile(s:theme_config_file)
+  if len(s:saved_lines) > 0 && !empty(trim(s:saved_lines[0]))
+    let s:init_theme = trim(s:saved_lines[0])
+  endif
+endif
+silent! call OnVimApplyTheme(s:init_theme)
+if !exists('g:colors_name')
+  silent! call OnVimApplyTheme('habamax')
+endif
 
 " ==============================================================================
 "                      Стартовый экран (Dashboard / Startify)
