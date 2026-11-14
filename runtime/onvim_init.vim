@@ -32,7 +32,6 @@ inoremap <ScrollWheelUp> <C-o>3<C-y>
 set signcolumn=yes
 set showmatch
 set nowrap
-set whichwrap+=<,>,h,l,[,] " Стрелки и h/l переходят на следующую строку в конце строки
 set splitbelow splitright
 set undofile
 set undodir=~/.cache/onvim/undo
