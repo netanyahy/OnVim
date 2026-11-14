@@ -71,6 +71,18 @@ set expandtab tabstop=4 shiftwidth=4 softtabstop=4 autoindent smartindent
 " --- Поиск ---
 set ignorecase smartcase hlsearch incsearch
 
+" --- Настройки иконок (Tux Penguin  вместо лого дистрибутивов) ---
+let g:DevIconsEnableDistro = 0
+function! WebDevIconsGetFileFormatSymbol(...) abort
+  if &fileformat ==? 'dos'
+    return ''
+  elseif &fileformat ==? 'mac'
+    return ''
+  else
+    return ''
+  endif
+endfunction
+
 " ==============================================================================
 "                  Встроенный менеджер плагинов (OnVim Plug)
 " ==============================================================================
@@ -97,6 +109,17 @@ Plug 'prabirshrestha/asyncomplete.vim'        " Асинхронное авто�
 Plug 'prabirshrestha/asyncomplete-lsp.vim'    " Автодополнение от серверов LSP
 
 call plug#end()
+
+" Заменяем лого дистрибутива на легендарного Tux (Linux Penguin )
+function! WebDevIconsGetFileFormatSymbol(...) abort
+  if &fileformat ==? 'dos'
+    return ''
+  elseif &fileformat ==? 'mac'
+    return ''
+  else
+    return ''
+  endif
+endfunction
 
 " ==============================================================================
 "                  Настройка тем и интерфейса (Theme Switcher)
@@ -344,14 +367,30 @@ if executable('typescript-language-server')
     \ })
 endif
 
-" 3. Java (jdtls / vim-lsp-settings)
+" 3. Java (Eclipse JDTLS - полноценный языковой сервер для Java)
 if executable('jdtls')
   au User lsp_setup call lsp#register_server({
     \ 'name': 'jdtls',
     \ 'cmd': {server_info->['jdtls']},
+    \ 'root_uri': {server_info->lsp#utils#path_to_uri(
+    \   lsp#utils#find_nearest_parent_file_directory(
+    \     lsp#utils#get_buffer_path(),
+    \     ['pom.xml', 'build.gradle', 'build.gradle.kts', 'settings.gradle', '.git']
+    \   )
+    \ )},
     \ 'allowlist': ['java'],
     \ })
 endif
+
+" Специфичные настройки для Java-разработки (Maven, Gradle, OpenJDK)
+augroup OnVimJava
+  au!
+  autocmd FileType java setlocal expandtab tabstop=4 shiftwidth=4 softtabstop=4
+  autocmd FileType java setlocal autoindent smartindent
+  autocmd FileType java setlocal cinoptions+=j1,(0,ws,Ws
+  autocmd FileType java setlocal commentstring=//\ %s
+  autocmd FileType java nnoremap <buffer> <leader>r :!javac % && java %:r<CR>
+augroup END
 
 " Горячие клавиши LSP:
 function! s:on_lsp_buffer_enabled() abort
