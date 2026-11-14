@@ -172,6 +172,37 @@ let g:lsp_diagnostics_echo_cursor = 1
 let g:lsp_signs_enabled = 1
 let g:lsp_highlights_enabled = 1
 let g:lsp_text_edit_enabled = 1
+let g:lsp_preview_float = 1
+let g:lsp_diagnostics_float_cursor = 1
+let g:lsp_async_completion = 1
+
+" Автоматическая регистрация серверов автодополнения и анализа:
+" 1. Python (pyright)
+if executable('pyright-langserver')
+  au User lsp_setup call lsp#register_server({
+    \ 'name': 'pyright',
+    \ 'cmd': {server_info->['pyright-langserver', '--stdio']},
+    \ 'allowlist': ['python'],
+    \ })
+endif
+
+" 2. JavaScript / TypeScript (typescript-language-server)
+if executable('typescript-language-server')
+  au User lsp_setup call lsp#register_server({
+    \ 'name': 'typescript-language-server',
+    \ 'cmd': {server_info->['typescript-language-server', '--stdio']},
+    \ 'allowlist': ['javascript', 'javascriptreact', 'typescript', 'typescriptreact'],
+    \ })
+endif
+
+" 3. Java (jdtls / vim-lsp-settings)
+if executable('jdtls')
+  au User lsp_setup call lsp#register_server({
+    \ 'name': 'jdtls',
+    \ 'cmd': {server_info->['jdtls']},
+    \ 'allowlist': ['java'],
+    \ })
+endif
 
 " Горячие клавиши LSP:
 function! s:on_lsp_buffer_enabled() abort
@@ -193,8 +224,13 @@ augroup lsp_install
 augroup END
 
 " ==============================================================================
-"                       Автодополнение (Asyncomplete)
+"               Мгновенное автодополнение на лету (Asyncomplete)
 " ==============================================================================
+let g:asyncomplete_auto_popup = 1
+let g:asyncomplete_popup_delay = 30
+let g:asyncomplete_min_chars = 1
+let g:asyncomplete_auto_completeopt = 0
+
 set wildmenu
 set wildmode=longest:full,full
 if exists('+wildoptions')
