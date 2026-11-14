@@ -19,8 +19,17 @@ set clipboard^=unnamed,unnamedplus
 set termguicolors
 set number relativenumber
 set cursorline
-set scrolloff=8
-set sidescrolloff=8
+set scrolloff=3
+set sidescrolloff=5
+set mousescroll=ver:3,hor:2
+
+" Свободный скролл колёсиком мыши
+nnoremap <ScrollWheelDown> 3<C-e>
+nnoremap <ScrollWheelUp> 3<C-y>
+vnoremap <ScrollWheelDown> 3<C-e>
+vnoremap <ScrollWheelUp> 3<C-y>
+inoremap <ScrollWheelDown> <C-o>3<C-e>
+inoremap <ScrollWheelUp> <C-o>3<C-y>
 set signcolumn=yes
 set showmatch
 set nowrap
