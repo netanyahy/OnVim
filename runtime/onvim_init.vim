@@ -106,6 +106,7 @@ Plug 'tpope/vim-commentary'                   " Быстрое комменти�
 
 " --- Поддержка языков (Python, JS, Java) & LSP ---
 Plug 'sheerun/vim-polyglot'                   " Полная подсветка синтаксиса (Python, JS/TS, Java...)
+Plug 'uiiaoo/java-syntax.vim'                 " Максимально детальный синтаксис Java (VS Code Style)
 Plug 'prabirshrestha/vim-lsp'                 " Полноценный LSP клиент
 Plug 'mattn/vim-lsp-settings'                 " Автоустановка серверов LSP (Python, JS, Java)
 Plug 'prabirshrestha/asyncomplete.vim'        " Асинхронное автодополнение
@@ -394,9 +395,39 @@ if executable('jdtls')
     \ })
 endif
 
+" Максимальная детализация подсветки Java как в VS Code
+let g:java_highlight_all = 1
+let g:java_highlight_functions = 1
+let g:java_highlight_signature = 1
+let g:java_highlight_generics = 1
+let g:java_highlight_java_lang_ids = 1
+let g:java_highlight_debug = 1
+
+function! s:tune_java_highlights() abort
+  hi! def link javaFunction       Function
+  hi! def link javaType           Type
+  hi! def link javaConstant       Constant
+  hi! def link javaOperator       Operator
+  hi! def link javaPreProc        PreProc
+  hi! def link javaAccessKeyword  Keyword
+  hi! def link javaModifierKeyword StorageClass
+  hi! def link javaClassKeyword   Structure
+  if &background ==# 'dark'
+    hi! javaFunction   guifg=#89b4fa gui=bold ctermfg=111
+    hi! javaType       guifg=#f9e2af gui=bold ctermfg=223
+    hi! javaPreProc    guifg=#fab387 ctermfg=216
+    hi! javaConstant   guifg=#fab387 gui=bold ctermfg=216
+    hi! javaOperator   guifg=#89dceb ctermfg=116
+    hi! javaComment    guifg=#6c7086 gui=italic ctermfg=243
+    hi! javaString     guifg=#a6e3a1 ctermfg=149
+  endif
+endfunction
+
 " Специфичные настройки для Java-разработки (Maven, Gradle, OpenJDK)
 augroup OnVimJava
   au!
+  autocmd FileType java call s:tune_java_highlights()
+  autocmd ColorScheme * call s:tune_java_highlights()
   autocmd FileType java setlocal expandtab tabstop=4 shiftwidth=4 softtabstop=4
   autocmd FileType java setlocal autoindent smartindent
   autocmd FileType java setlocal cinoptions+=j1,(0,ws,Ws
