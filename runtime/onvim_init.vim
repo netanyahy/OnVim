@@ -22,11 +22,18 @@ set cursorline
 
 " Залитый прямоугольный блочный курсор во всех режимах (Normal, Insert, Visual)
 set guicursor=a:block-Cursor
-if !has('gui_running')
-  let &t_SI = "\e[2 q"
-  let &t_EI = "\e[2 q"
-  let &t_SR = "\e[2 q"
-endif
+
+" Поддержка русской раскладки в обычном режиме (h/j/k/l, w, q, и двоеточие : работают на русском)
+set langmap=ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯ;ABCDEFGHIJKLMNOPQRSTUVWXYZ,фисвуапршолдьтщзйкыегмцчня;abcdefghijklmnopqrstuvwxyz
+nnoremap Ж :
+nnoremap ж :
+vnoremap Ж :
+vnoremap ж :
+
+" Избегаем зависаний на сообщениях
+set shortmess+=c
+set shortmess+=F
+set cmdheight=1
 
 set scrolloff=3
 set sidescrolloff=5
@@ -236,6 +243,7 @@ let g:lsp_text_edit_enabled = 1
 let g:lsp_preview_float = 1
 let g:lsp_diagnostics_float_cursor = 1
 let g:lsp_async_completion = 1
+let g:lsp_settings_warn_missing_server = 0
 
 " Автоматическая регистрация серверов автодополнения и анализа:
 " 1. Python (pyright)
