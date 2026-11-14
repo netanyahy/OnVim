@@ -31,6 +31,11 @@ endif
 set scrolloff=3
 set sidescrolloff=5
 
+" Отключение звуковых сигналов (bell / пищание)
+set noerrorbells
+set novisualbell
+set t_vb=
+
 " Свободный скролл колёсиком мыши
 nnoremap <ScrollWheelDown> 3<C-e>
 nnoremap <ScrollWheelUp> 3<C-y>
