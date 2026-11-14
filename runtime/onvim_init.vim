@@ -527,14 +527,6 @@ au User asyncomplete_setup call asyncomplete#register_source(asyncomplete#source
 "                           Горячие клавиши
 " ==============================================================================
 
-" Быстрое сохранение (Ctrl+S везде или Пробел + w)
-nnoremap <C-s> :w<CR>
-inoremap <C-s> <Esc>:w<CR>a
-nnoremap <leader>w :w<CR>
-
-" Быстрый выход (Пробел + q)
-nnoremap <leader>q :q<CR>
-
 " Сброс подсветки поиска клавишей Escape
 nnoremap <silent> <Esc> :nohlsearch<CR><Esc>
 
