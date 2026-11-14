@@ -21,7 +21,6 @@ set number relativenumber
 set cursorline
 set scrolloff=3
 set sidescrolloff=5
-set mousescroll=ver:3,hor:2
 
 " Свободный скролл колёсиком мыши
 nnoremap <ScrollWheelDown> 3<C-e>
