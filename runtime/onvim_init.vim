@@ -17,6 +17,9 @@ set fileencoding=utf-8
 set mouse=a
 set clipboard^=unnamed,unnamedplus
 set termguicolors
+syntax enable
+filetype plugin indent on
+
 set number norelativenumber
 set cursorline
 
@@ -107,6 +110,8 @@ Plug 'prabirshrestha/vim-lsp'                 " Полноценный LSP кл�
 Plug 'mattn/vim-lsp-settings'                 " Автоустановка серверов LSP (Python, JS, Java)
 Plug 'prabirshrestha/asyncomplete.vim'        " Асинхронное автодополнение
 Plug 'prabirshrestha/asyncomplete-lsp.vim'    " Автодополнение от серверов LSP
+Plug 'prabirshrestha/asyncomplete-buffer.vim' " Автодополнение слов из буфера
+Plug 'prabirshrestha/asyncomplete-file.vim'   " Автодополнение путей к файлам
 
 call plug#end()
 
@@ -369,15 +374,22 @@ endif
 
 " 3. Java (Eclipse JDTLS - полноценный языковой сервер для Java)
 if executable('jdtls')
+  function! s:get_java_root_uri(server_info) abort
+    let l:path = lsp#utils#get_buffer_path()
+    let l:root = lsp#utils#find_nearest_parent_file_directory(l:path, ['pom.xml', 'build.gradle', 'build.gradle.kts', 'settings.gradle', '.git'])
+    if empty(l:root)
+      let l:root = fnamemodify(l:path, ':h')
+    endif
+    if empty(l:root)
+      let l:root = getcwd()
+    endif
+    return lsp#utils#path_to_uri(l:root)
+  endfunction
+
   au User lsp_setup call lsp#register_server({
     \ 'name': 'jdtls',
     \ 'cmd': {server_info->['jdtls']},
-    \ 'root_uri': {server_info->lsp#utils#path_to_uri(
-    \   lsp#utils#find_nearest_parent_file_directory(
-    \     lsp#utils#get_buffer_path(),
-    \     ['pom.xml', 'build.gradle', 'build.gradle.kts', 'settings.gradle', '.git']
-    \   )
-    \ )},
+    \ 'root_uri': function('s:get_java_root_uri'),
     \ 'allowlist': ['java'],
     \ })
 endif
@@ -429,6 +441,27 @@ set completeopt=menu,menuone,noinsert,noselect
 inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 inoremap <expr> <CR>    pumvisible() ? asyncomplete#close_popup() : "\<CR>"
+
+" Принудительный вызов меню автодополнения по Ctrl+Space
+inoremap <silent> <expr> <C-Space> asyncomplete#force_refresh()
+inoremap <silent> <expr> <C-@> asyncomplete#force_refresh()
+
+" Источники дополнения: буфер (слова и переменные) и пути к файлам
+au User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
+    \ 'name': 'buffer',
+    \ 'allowlist': ['*'],
+    \ 'completor': function('asyncomplete#sources#buffer#completor'),
+    \ 'config': {
+    \    'max_buffer_size': 5000000,
+    \  },
+    \ }))
+
+au User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#file#get_source_options({
+    \ 'name': 'file',
+    \ 'allowlist': ['*'],
+    \ 'priority': 10,
+    \ 'completor': function('asyncomplete#sources#file#completor')
+    \ }))
 
 " ==============================================================================
 "                           Горячие клавиши
