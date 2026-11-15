@@ -38,6 +38,7 @@
 ```bash
 git clone https://github.com/netanyahy/onvim.git
 cd onvim
+chmod +X install.sh
 ./install.sh
 ```
 
