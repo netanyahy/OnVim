@@ -597,3 +597,41 @@ nnoremap N Nzzzv
 nnoremap <C-d> <C-d>zz
 nnoremap <C-u> <C-u>zz
 nnoremap Y y$
+
+" ==============================================================================
+"          Быстрые команды в командной строке (:ht, :ot, :t1..:t9)
+" ==============================================================================
+
+" Функция переключения на вкладку buftabline по её номеру на экране (со скриншота)
+function! OnVimGoTab(num) abort
+  if exists('*buftabline#user_buffers')
+    let l:bufs = buftabline#user_buffers()
+    if a:num > 0 && a:num <= len(l:bufs)
+      execute 'buffer ' . l:bufs[a:num - 1]
+      return
+    endif
+  endif
+  execute 'silent! buffer ' . a:num
+endfunction
+
+" Автоматическое раскрытие аббревиатур при нажатии Enter в командной строке
+cnoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-]>\<CR>"
+
+" :ht / :нт (Hide Tree) — закрыть боковую панель проводника
+cnoreabbrev <expr> ht (getcmdtype() ==# ':' && getcmdline() ==# 'ht') ? 'silent! NERDTreeClose' : 'ht'
+cnoreabbrev <expr> нт (getcmdtype() ==# ':' && getcmdline() ==# 'нт') ? 'silent! NERDTreeClose' : 'нт'
+
+" :ot / :от (Open Tree) — открыть боковую панель проводника
+cnoreabbrev <expr> ot (getcmdtype() ==# ':' && getcmdline() ==# 'ot') ? 'silent! NERDTreeFocus' : 'ot'
+cnoreabbrev <expr> от (getcmdtype() ==# ':' && getcmdline() ==# 'от') ? 'silent! NERDTreeFocus' : 'от'
+
+" :t1 .. :t9 / :е1 .. :е9 — переключение между открытыми вкладками buftabline
+for s:tab_idx in range(1, 9)
+  execute printf("cnoreabbrev <expr> t%d (getcmdtype() ==# ':' && getcmdline() ==# 't%d') ? 'call OnVimGoTab(%d)' : 't%d'", s:tab_idx, s:tab_idx, s:tab_idx, s:tab_idx)
+  execute printf("cnoreabbrev <expr> е%d (getcmdtype() ==# ':' && getcmdline() ==# 'е%d') ? 'call OnVimGoTab(%d)' : 'е%d'", s:tab_idx, s:tab_idx, s:tab_idx, s:tab_idx)
+endfor
+
+" Резервные Ex-команды с заглавной буквы
+command! -nargs=0 Ht silent! NERDTreeClose
+command! -nargs=0 Ot silent! NERDTreeFocus
+command! -nargs=1 T call OnVimGoTab(<args>)
